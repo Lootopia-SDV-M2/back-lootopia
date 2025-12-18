@@ -4,4 +4,5 @@ public enum Role {
     ROLE_USER,
     ROLE_HUNTER,
     ROLE_ADMIN
+
 }
