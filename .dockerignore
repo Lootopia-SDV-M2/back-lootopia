@@ -1,0 +1,47 @@
+# Build artifacts
+target/
+*.jar
+*.war
+*.class
+
+# Maven wrapper (downloaded in container)
+.mvn/
+mvnw
+mvnw.cmd
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+*.swp
+*.swo
+
+# Environment and secrets
+.env
+.env.*
+!.env.sample
+
+# Documentation
+*.md
+LICENSE
+
+# GitHub
+.github/
+
+# Logs
+*.log
+logs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test files (optional - include if you want to run tests in container)
+# src/test/
