@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import com.supdevinci.lootopia.controller.dto.AuthRequest;
 import com.supdevinci.lootopia.controller.dto.AuthResponse;
 import com.supdevinci.lootopia.controller.dto.RegisterRequest;
-import com.supdevinci.lootopia.model.Role;
+import com.supdevinci.lootopia.model.enums.Role;
 import com.supdevinci.lootopia.model.User;
 import com.supdevinci.lootopia.repository.UserRepository;
 
@@ -25,10 +25,11 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request) {
         var user = new User();
-        user.setUsername(request.getUsername());
+        user.setNom(request.getUsername());
+        user.setPrenom("");
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.ROLE_HUNTER);
+        user.setRole(Role.CHERCHEUR);
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(user);
         return AuthResponse.builder()
@@ -43,7 +44,7 @@ public class AuthService {
                         request.getPassword()
                 )
         );
-        var user = userRepository.findByUsername(request.getUsername())
+        var user = userRepository.findByEmail(request.getUsername())
                 .orElseThrow();
         var jwtToken = jwtService.generateToken(user);
         return AuthResponse.builder()
