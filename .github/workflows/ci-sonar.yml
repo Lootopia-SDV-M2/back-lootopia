@@ -45,12 +45,6 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         run: mvn -B sonar:sonar
 
-  quality-gate:
-    name: Quality Gate Check
-    runs-on: ubuntu-latest
-    needs: build-and-analyze
-
-    steps:
       - name: Verification du Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
         timeout-minutes: 5
