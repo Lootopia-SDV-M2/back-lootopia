@@ -9,9 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RegisterRequest {
-    private String username;
-    private String email;
-    private String password;
-    private String role;
+public class StepRequest {
+    private Integer orderIndex;
+    private String title;
+    private String description;
+    private Double latitude;
+    private Double longitude;
+    private Integer radius;
 }

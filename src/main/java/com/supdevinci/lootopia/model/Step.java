@@ -28,6 +28,14 @@ public class Step {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String description;
 
-    @Column
-    private String location;
+    private String title;
+
+    @Column(nullable = false)
+    private Double latitude;
+
+    @Column(nullable = false)
+    private Double longitude;
+
+    @Column(nullable = false, columnDefinition = "INTEGER DEFAULT 20")
+    private Integer radius = 20;
 }

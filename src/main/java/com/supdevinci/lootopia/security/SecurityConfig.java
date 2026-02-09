@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 "/v3/api-docs/**",      // Documentation OpenAPI
                                 "/swagger-resources/**",// Swagger resources
                                 "/webjars/**",          // Webjars utilisés par Swagger
-                                "/actuator/**"
+                                "/actuator/**",
+                                "/uploads/**"           // Fichiers uploadés
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

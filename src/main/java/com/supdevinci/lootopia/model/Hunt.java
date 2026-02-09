@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -15,7 +14,6 @@ import java.util.List;
 @Entity
 @Table(name = "hunt")
 public class Hunt {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -37,9 +35,12 @@ public class Hunt {
     @Column(nullable = false)
     private HuntStatus status = HuntStatus.BROUILLON;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "reward_id")
-    private Artefact reward;
+    @Column(name = "max_participants")
+    private Integer maxParticipants;
+
+    private String duration;
+
+    private String theme;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -47,6 +48,9 @@ public class Hunt {
     @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("orderIndex ASC")
     private List<Step> steps;
+
+    @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reward> rewards;
 
     @OneToMany(mappedBy = "hunt", cascade = CascadeType.ALL)
     private List<Participation> participations;
