@@ -156,6 +156,18 @@ public class HuntService {
     }
 
     private HuntSummaryResponse toHuntSummaryResponse(Hunt hunt) {
+        Double latitude = null;
+        Double longitude = null;
+        if (hunt.getSteps() != null && !hunt.getSteps().isEmpty()) {
+            Step firstStep = hunt.getSteps().stream()
+                    .min((a, b) -> Integer.compare(a.getOrderIndex(), b.getOrderIndex()))
+                    .orElse(null);
+            if (firstStep != null) {
+                latitude = firstStep.getLatitude();
+                longitude = firstStep.getLongitude();
+            }
+        }
+
         return HuntSummaryResponse.builder()
                 .id(hunt.getId())
                 .title(hunt.getTitle())
@@ -168,6 +180,8 @@ public class HuntService {
                 .creatorName(hunt.getCreator().getNom())
                 .stepsCount(hunt.getSteps() != null ? hunt.getSteps().size() : 0)
                 .rewardsCount(hunt.getRewards() != null ? hunt.getRewards().size() : 0)
+                .latitude(latitude)
+                .longitude(longitude)
                 .createdAt(hunt.getCreatedAt())
                 .build();
     }
