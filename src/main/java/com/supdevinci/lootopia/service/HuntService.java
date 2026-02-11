@@ -180,6 +180,9 @@ public class HuntService {
                 .creatorName(hunt.getCreator().getNom())
                 .stepsCount(hunt.getSteps() != null ? hunt.getSteps().size() : 0)
                 .rewardsCount(hunt.getRewards() != null ? hunt.getRewards().size() : 0)
+                .claimedRewardsCount(hunt.getRewards() != null
+                        ? (int) hunt.getRewards().stream().filter(r -> r.getWinner() != null).count()
+                        : 0)
                 .latitude(latitude)
                 .longitude(longitude)
                 .createdAt(hunt.getCreatedAt())

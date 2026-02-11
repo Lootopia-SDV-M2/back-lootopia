@@ -23,6 +23,7 @@ public class HuntSummaryResponse {
     private String creatorName;
     private int stepsCount;
     private int rewardsCount;
+    private int claimedRewardsCount;
     private Double latitude;
     private Double longitude;
     private LocalDateTime createdAt;
