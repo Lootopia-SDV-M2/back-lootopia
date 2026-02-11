@@ -6,6 +6,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
+
 import com.supdevinci.lootopia.controller.dto.AuthRequest;
 import com.supdevinci.lootopia.controller.dto.AuthResponse;
 import com.supdevinci.lootopia.controller.dto.RegisterRequest;
@@ -29,11 +31,14 @@ public class AuthService {
         user.setPrenom("");
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(Role.CHERCHEUR);
+        Role role = "ORGANISATEUR".equalsIgnoreCase(request.getRole()) ? Role.ORGANISATEUR : Role.CHERCHEUR;
+        user.setRole(role);
         userRepository.save(user);
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(Map.of("role", user.getRole().name()), user);
         return AuthResponse.builder()
                 .token(jwtToken)
+                .role(user.getRole().name())
+                .username(user.getNom())
                 .build();
     }
 
@@ -46,9 +51,11 @@ public class AuthService {
         );
         var user = userRepository.findByEmail(request.getUsername())
                 .orElseThrow();
-        var jwtToken = jwtService.generateToken(user);
+        var jwtToken = jwtService.generateToken(Map.of("role", user.getRole().name()), user);
         return AuthResponse.builder()
                 .token(jwtToken)
+                .role(user.getRole().name())
+                .username(user.getNom())
                 .build();
     }
 }
