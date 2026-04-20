@@ -7,6 +7,8 @@ import com.supdevinci.lootopia.repository.ArtefactRepository;
 import com.supdevinci.lootopia.repository.HuntRepository;
 import com.supdevinci.lootopia.repository.ParticipationRepository;
 import com.supdevinci.lootopia.repository.RewardRepository;
+import com.supdevinci.lootopia.service.NotificationService;
+import com.supdevinci.lootopia.service.VoucherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,6 +25,8 @@ public class ParticipationService {
     private final HuntRepository huntRepository;
     private final RewardRepository rewardRepository;
     private final ArtefactRepository artefactRepository;
+    private final NotificationService notificationService;
+    private final VoucherService voucherService;
 
     @Transactional
     public ParticipationResponse joinHunt(Long huntId, User user) {
@@ -72,6 +76,9 @@ public class ParticipationService {
         if (isLastStep) {
             // Hunt completed!
             participation.setStatus(ParticipationStatus.TERMINE);
+
+            // Notify hunt organizer
+            notificationService.createHuntCompletedNotification(hunt, hunt.getCreator());
 
             // Assign a reward to the winner
             assignReward(hunt, user);
@@ -137,6 +144,8 @@ public class ParticipationService {
         // Assign the reward to the winner
         availableReward.setWinner(winner);
         rewardRepository.save(availableReward);
+
+        voucherService.createVoucher(availableReward, winner);
 
         // Create an artefact in the winner's inventory
         Artefact artefact = new Artefact();
