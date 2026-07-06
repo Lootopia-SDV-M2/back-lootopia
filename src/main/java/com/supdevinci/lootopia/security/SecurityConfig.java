@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import java.util.List;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -36,7 +37,8 @@ public class SecurityConfig {
                 }))
                 .csrf(csrf -> csrf.disable()) // Désactive CSRF car API stateless
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers(
+                        req.requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+                        .requestMatchers(
                                 "/api/auth/**",
                                 "/swagger-ui/**",       // Swagger UI
                                 "/v3/api-docs/**",      // Documentation OpenAPI
