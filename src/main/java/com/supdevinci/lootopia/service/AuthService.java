@@ -34,11 +34,19 @@ public class AuthService {
             throw new IllegalArgumentException("Email already exists");
         }
 
+        Role role = Role.fromApiValue(request.role());
+        String siret = normalizeSiret(request.siret());
+
+        if (role == Role.ORGANISATEUR && siret == null) {
+            throw new IllegalArgumentException("SIRET is required for organizer accounts");
+        }
+
         User user = new User();
         user.setUsername(request.username());
         user.setEmail(request.email().toLowerCase());
         user.setPassword(passwordEncoder.encode(request.password()));
-        user.setRole(Role.fromApiValue(request.role()));
+        user.setRole(role);
+        user.setSiret(role == Role.ORGANISATEUR ? siret : null);
         user.setBalance(0L);
         user.setEnabled(true);
 
@@ -63,5 +71,17 @@ public class AuthService {
                 user
         );
         return new AuthResponse(token, UserResponse.from(user));
+    }
+
+    private String normalizeSiret(String siret) {
+        if (siret == null || siret.isBlank()) {
+            return null;
+        }
+
+        String normalizedSiret = siret.replaceAll("\\s", "");
+        if (!normalizedSiret.matches("\\d{14}")) {
+            throw new IllegalArgumentException("SIRET must contain 14 digits");
+        }
+        return normalizedSiret;
     }
 }

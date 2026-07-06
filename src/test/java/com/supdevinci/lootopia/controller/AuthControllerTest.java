@@ -47,18 +47,21 @@ class AuthControllerTest {
                                   "username": "alice",
                                   "email": "alice@example.com",
                                   "password": "secret123",
-                                  "role": "ORGANISATEUR"
+                                  "role": "ORGANISATEUR",
+                                  "siret": "123 456 789 00012"
                                 }
                                 """))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.token", not(blankOrNullString())))
                 .andExpect(jsonPath("$.username").value("alice"))
                 .andExpect(jsonPath("$.email").value("alice@example.com"))
-                .andExpect(jsonPath("$.role").value("ORGANISATEUR"));
+                .andExpect(jsonPath("$.role").value("ORGANISATEUR"))
+                .andExpect(jsonPath("$.user.siret").value("12345678900012"));
 
         User savedUser = userRepository.findByUsername("alice").orElseThrow();
         assertThat(savedUser.getEmail()).isEqualTo("alice@example.com");
         assertThat(savedUser.getRole().name()).isEqualTo("ORGANISATEUR");
+        assertThat(savedUser.getSiret()).isEqualTo("12345678900012");
         assertThat(passwordEncoder.matches("secret123", savedUser.getPassword())).isTrue();
     }
 
@@ -71,7 +74,8 @@ class AuthControllerTest {
                                   "username": "bob",
                                   "email": "bob@example.com",
                                   "password": "secret123",
-                                  "role": "CHERCHEUR"
+                                  "role": "CHERCHEUR",
+                                  "siret": ""
                                 }
                                 """))
                 .andExpect(status().isOk());

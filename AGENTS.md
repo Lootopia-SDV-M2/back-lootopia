@@ -237,6 +237,8 @@ Ces endpoints sont documentés dans le README et/ou consommés par le frontend :
 | GET | `/api/vouchers/mine` | Vouchers du joueur |
 | POST | `/api/vouchers/redeem` | Utiliser un voucher (organisateur) |
 
+Contrat auth : `POST /api/auth/register` accepte `{ username, email, password, role, siret? }`. Pour `role = ORGANISATEUR`, `siret` est obligatoire, normalisÃ© en 14 chiffres, stockÃ© sur `User.siret` et destinÃ© Ã  l'analyse par l'Ã©quipe avant validation.
+
 ---
 
 ## 7. Commandes utiles

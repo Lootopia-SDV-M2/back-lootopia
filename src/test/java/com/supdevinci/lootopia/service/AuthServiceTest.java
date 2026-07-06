@@ -47,7 +47,8 @@ class AuthServiceTest {
                 "alice",
                 "alice@example.com",
                 "Secret123!",
-                "CHERCHEUR"
+                "CHERCHEUR",
+                null
         ));
 
         assertThat(response.token()).isEqualTo("jwt-token");
@@ -65,9 +66,45 @@ class AuthServiceTest {
                 "alice",
                 "alice@example.com",
                 "Secret123!",
-                "CHERCHEUR"
+                "CHERCHEUR",
+                null
         ))).isInstanceOf(IllegalArgumentException.class)
                 .hasMessageContaining("Email");
+    }
+
+    @Test
+    void registersOrganizerWithNormalizedSiret() {
+        when(userRepository.existsByUsername("museum")).thenReturn(false);
+        when(userRepository.existsByEmail("museum@example.com")).thenReturn(false);
+        when(passwordEncoder.encode("Secret123!")).thenReturn("hashed-password");
+        when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
+        when(jwtService.generateToken(anyMap(), any(User.class))).thenReturn("jwt-token");
+
+        AuthResponse response = authService.register(new RegisterRequest(
+                "museum",
+                "museum@example.com",
+                "Secret123!",
+                "ORGANISATEUR",
+                "123 456 789 00012"
+        ));
+
+        assertThat(response.user().role()).isEqualTo("ORGANISATEUR");
+        assertThat(response.user().siret()).isEqualTo("12345678900012");
+    }
+
+    @Test
+    void rejectsOrganizerWithoutSiret() {
+        when(userRepository.existsByUsername("museum")).thenReturn(false);
+        when(userRepository.existsByEmail("museum@example.com")).thenReturn(false);
+
+        assertThatThrownBy(() -> authService.register(new RegisterRequest(
+                "museum",
+                "museum@example.com",
+                "Secret123!",
+                "ORGANISATEUR",
+                null
+        ))).isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("SIRET");
     }
 
     @Test
