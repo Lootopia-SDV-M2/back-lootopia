@@ -26,19 +26,27 @@ public class AuthService {
     private final AuthenticationManager authenticationManager;
 
     public AuthResponse register(RegisterRequest request) {
+        Role role = "ORGANISATEUR".equalsIgnoreCase(request.getRole()) ? Role.ORGANISATEUR : Role.CHERCHEUR;
+        String siret = normalizeSiret(request.getSiret());
+
+        if (role == Role.ORGANISATEUR && siret == null) {
+            throw new IllegalArgumentException("SIRET is required for organizer accounts");
+        }
+
         var user = new User();
         user.setNom(request.getUsername());
         user.setPrenom("");
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
-        Role role = "ORGANISATEUR".equalsIgnoreCase(request.getRole()) ? Role.ORGANISATEUR : Role.CHERCHEUR;
         user.setRole(role);
+        user.setSiret(role == Role.ORGANISATEUR ? siret : null);
         userRepository.save(user);
         var jwtToken = jwtService.generateToken(Map.of("role", user.getRole().name()), user);
         return AuthResponse.builder()
                 .token(jwtToken)
                 .role(user.getRole().name())
                 .username(user.getNom())
+                .siret(user.getSiret())
                 .build();
     }
 
@@ -56,6 +64,19 @@ public class AuthService {
                 .token(jwtToken)
                 .role(user.getRole().name())
                 .username(user.getNom())
+                .siret(user.getSiret())
                 .build();
+    }
+
+    private String normalizeSiret(String siret) {
+        if (siret == null || siret.isBlank()) {
+            return null;
+        }
+
+        String normalizedSiret = siret.replaceAll("\\s", "");
+        if (!normalizedSiret.matches("\\d{14}")) {
+            throw new IllegalArgumentException("SIRET must contain 14 digits");
+        }
+        return normalizedSiret;
     }
 }

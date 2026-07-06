@@ -31,6 +31,9 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private String nom;
 
+    @Column(length = 14)
+    private String siret;
+
     @Column(nullable = false)
     private String prenom;
 
