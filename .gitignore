@@ -1,5 +1,6 @@
 HELP.md
 target/
+.m2repo/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
@@ -34,3 +35,4 @@ build/
 
 
 .env
+data/
